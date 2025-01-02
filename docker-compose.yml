@@ -1,0 +1,22 @@
+services:
+  postgres:
+    container_name: ms_pg_sql
+    image: postgres
+    environment:
+      POSTGRES_USER: sara
+      POSTGRES_PASSWORD: boulaid
+      PGDATA: /var/lib/postgresql/data  # Le chemin où les données seront stockées dans le conteneur
+    volumes:
+      - postgres:/var/lib/postgresql/data  # Utilisation correcte du volume nommé
+    ports:
+      - 5432:5432
+    networks:
+      - microservices-net
+    restart: unless-stopped
+networks:
+  microservices-net: #seul conteneur du meme reseau peuvent se voir et communiqyer entre eux via DNS
+    driver: bridge
+
+volumes:
+  postgres: #meme nom
+

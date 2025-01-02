@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: native
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/configurations #le dossier contenant la configuration de tous les services
+          #classpath => ressources
+
+server:
+  port: 8888
