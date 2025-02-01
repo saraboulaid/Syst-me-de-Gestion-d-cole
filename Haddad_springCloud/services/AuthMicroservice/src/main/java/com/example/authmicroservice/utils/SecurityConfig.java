@@ -23,10 +23,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Désactive CSRF (utile pour les tests avec Postman)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()  // Permet l'accès à /auth/login
-                        .anyRequest().authenticated() // Toutes les autres routes nécessitent une authentification
+                        .requestMatchers("/auth/login").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // API sans session
 

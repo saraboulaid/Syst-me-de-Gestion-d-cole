@@ -1,0 +1,57 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: module-microservice
+          uri: lb://module-microservice
+          predicates:
+            - Path=/api/modules/**
+          filters:
+            - name: JwtTokenValidationFilter
+              args:
+                token-header: "Authorization"
+
+        - id: professeurs-microservice
+          uri: lb://professeurs-microservice
+          predicates:
+            - Path=/api/professeurs/**
+          filters:
+            - name: JwtTokenValidationFilter
+              args:
+                token-header: "Authorization"
+
+        - id: etudiantMicroservice
+          uri: lb://etudiantMicroservice
+          predicates:
+            - Path=/api/etudiants/**
+          filters:
+            - name: JwtTokenValidationFilter
+              args:
+                token-header: "Authorization"
+
+        - id: statistiqueMicroservice
+          uri: lb://statistiqueMicroservice
+          predicates:
+            - Path=/api/statistiques/**
+          filters:
+            - name: JwtTokenValidationFilter
+              args:
+                token-header: "Authorization"
+
+      discovery:
+        locator:
+          enabled: true
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: full
+
+server:
+  port: 8085
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: DEBUG

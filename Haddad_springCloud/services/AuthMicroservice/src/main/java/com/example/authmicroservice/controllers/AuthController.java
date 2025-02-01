@@ -6,12 +6,12 @@ import com.example.authmicroservice.requests.LoginRequest;
 import com.example.authmicroservice.utils.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +24,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
+    @PreAuthorize("hasAuthority('Administrateur')")
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
@@ -48,5 +49,15 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(email, userOpt.get().getRole().name());
         return ResponseEntity.ok(Map.of("token", token, "role", userOpt.get().getRole()));
+    }
+
+    @PostMapping("/validate-token")
+    public Mono<Boolean> validateToken(@RequestHeader("Authorization") String token){
+        boolean isValid = jwtUtil.validateToken(token);
+        if (isValid) {
+            return Mono.just(isValid);
+        } else {
+            return Mono.just(false);
+        }
     }
 }
