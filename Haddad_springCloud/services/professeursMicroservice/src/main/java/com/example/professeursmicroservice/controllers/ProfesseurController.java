@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:8084" })
 @RestController
 @RequestMapping(value = "api/professeurs")
 public class ProfesseurController {
@@ -70,5 +70,10 @@ public class ProfesseurController {
 
          return ResponseEntity.ok(true);
 
+    }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<Long> count(){
+        return ResponseEntity.ok(professeurService.count());
     }
 }

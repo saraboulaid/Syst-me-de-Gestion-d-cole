@@ -10,7 +10,7 @@ public interface InscriptionService {
     Optional<Inscription> findByPk(int pk);
     List<Inscription> list();
     void delete(Inscription inscription);
-
+    long count();
     Optional<Inscription> findByEtudiantAndModule(String matricule, String moduleId);
     List<Inscription> findByEtudiant(String matricule);
 }

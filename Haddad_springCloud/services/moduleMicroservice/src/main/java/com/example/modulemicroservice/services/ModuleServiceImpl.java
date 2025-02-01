@@ -39,7 +39,13 @@ public class ModuleServiceImpl implements ModuleService{
     }
 
     @Override
+    public long count(){
+        return moduleRepository.count();
+    }
+
+    @Override
     public boolean checkProfesseurExistence(String IdProf) {
         return professeurClient.exist(IdProf);
     }
+
 }

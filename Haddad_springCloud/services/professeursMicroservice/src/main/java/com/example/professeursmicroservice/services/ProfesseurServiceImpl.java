@@ -32,4 +32,7 @@ public class ProfesseurServiceImpl implements ProfesseurService {
     public void delete(Professeur professeur) {
         professeurRepository.delete(professeur);
     }
+
+    @Override
+    public long count(){return professeurRepository.count(); }
 }

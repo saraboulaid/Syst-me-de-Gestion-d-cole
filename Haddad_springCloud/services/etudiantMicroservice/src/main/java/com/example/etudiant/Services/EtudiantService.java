@@ -10,4 +10,7 @@ public interface EtudiantService {
     Optional<Etudiant> findByPk(String pk);
     List<Etudiant> list();
     void delete(Etudiant etudiant);
+    long count();
+    boolean checkModuleExistence(String IdModule);
+
 }

@@ -34,6 +34,11 @@ public class InscriptionServiceImpl implements InscriptionService{
     }
 
     @Override
+    public long count(){
+        return inscriptionRepository.count();
+    }
+
+    @Override
     public Optional<Inscription> findByEtudiantAndModule(String matricule, String moduleId) {
         return inscriptionRepository.findByEtudiantMatriculeAndModuleId(matricule, moduleId);
     }
