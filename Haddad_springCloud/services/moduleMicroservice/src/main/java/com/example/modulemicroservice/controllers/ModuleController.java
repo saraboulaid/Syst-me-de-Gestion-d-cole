@@ -1,5 +1,6 @@
 package com.example.modulemicroservice.controllers;
 
+import com.example.modulemicroservice.DTO.AssignProfDTO;
 import com.example.modulemicroservice.models.Module;
 import com.example.modulemicroservice.services.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +61,34 @@ public class ModuleController {
         final Optional<Module> maybeModule = moduleService.findByPk(pK);
 
         return maybeModule.map(ResponseEntity::ok) .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(value ="/{pK}/assign/")
+    public  ResponseEntity<Object> asign(@PathVariable final String pK, @RequestBody final AssignProfDTO assignProfDTO){
+
+        System.out.println("Reçu assignProfDTO : " + assignProfDTO);
+        System.out.println("ID Prof : " + assignProfDTO.getIdProf());
+
+        final Optional<Module> maybeModule = moduleService.findByPk(pK);
+
+        if(maybeModule.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("message", "Module introuvable"));
+
+        if (assignProfDTO.getIdProf() == null || assignProfDTO.getIdProf().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Bad Request"));
+        }
+
+        if (!moduleService.checkProfesseurExistence(assignProfDTO.getIdProf())) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Professeur introuvable"));
+        }
+
+        Module updatedModule = maybeModule.get();
+        updatedModule.setIdProf(assignProfDTO.getIdProf());
+
+        updatedModule = moduleService.save(updatedModule);
+        return ResponseEntity.accepted().body(updatedModule);
     }
 }
 

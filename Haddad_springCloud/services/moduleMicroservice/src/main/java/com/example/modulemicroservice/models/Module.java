@@ -1,5 +1,6 @@
 package com.example.modulemicroservice.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,5 +18,15 @@ public class Module {
     private String nom;
     private int nbrHeures;
     private String description;
+
+    @Column(nullable = true)
+    private String IdProf;
+
+    public Module(String id, String nom, int nbrHeures, String description){
+        this.IdModule = id;
+        this.nom = nom;
+        this.description = description;
+        this.nbrHeures = nbrHeures;
+    }
 
 }

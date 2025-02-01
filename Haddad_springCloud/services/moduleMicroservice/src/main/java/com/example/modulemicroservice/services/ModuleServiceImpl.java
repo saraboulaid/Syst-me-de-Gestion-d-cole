@@ -1,5 +1,6 @@
 package com.example.modulemicroservice.services;
 
+import com.example.modulemicroservice.clients.ProfesseurClient;
 import com.example.modulemicroservice.models.Module;
 import com.example.modulemicroservice.repositories.ModuleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ public class ModuleServiceImpl implements ModuleService{
 
     @Autowired
     private ModuleRepository moduleRepository;
+
+    @Autowired
+    private ProfesseurClient professeurClient;
 
     @Override
     public Module save(Module module) {
@@ -32,5 +36,10 @@ public class ModuleServiceImpl implements ModuleService{
     @Override
     public void delete(Module module) {
         moduleRepository.delete(module);
+    }
+
+    @Override
+    public boolean checkProfesseurExistence(String IdProf) {
+        return professeurClient.exist(IdProf);
     }
 }

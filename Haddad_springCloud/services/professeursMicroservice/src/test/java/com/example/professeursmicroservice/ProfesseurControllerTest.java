@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProfesseurControllerIntegrationTest {
+class ProfesseurControllerTest {
 
     private MockMvc mockMvc;
 
@@ -139,4 +139,27 @@ class ProfesseurControllerIntegrationTest {
 
         verify(professeurService, times(1)).findByPk("Prof2");
     }
+
+    @Test
+    void testExistProfesseur() throws Exception {
+        when(professeurService.findByPk("Prof1")).thenReturn(Optional.of(professeur));
+
+        mockMvc.perform(get("/api/professeurs/Prof1/exist"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("true"));
+
+        verify(professeurService, times(1)).findByPk("Prof1");
+    }
+
+    @Test
+    void testExistProfesseurNotFound() throws Exception {
+        when(professeurService.findByPk("Prof2")).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/professeurs/Prof2/exist"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("false"));
+
+        verify(professeurService, times(1)).findByPk("Prof2");
+    }
+
 }

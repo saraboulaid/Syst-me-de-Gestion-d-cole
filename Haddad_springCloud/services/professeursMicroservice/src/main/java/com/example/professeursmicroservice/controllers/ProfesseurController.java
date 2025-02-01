@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping(value = "api/professeurs")
 public class ProfesseurController {
@@ -58,5 +59,16 @@ public class ProfesseurController {
         final Optional<Professeur> maybeProfesseur = professeurService.findByPk(pK);
 
         return maybeProfesseur.map(ResponseEntity::ok) .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/{pK}/exist")
+    public ResponseEntity<Boolean> exist( @PathVariable final String pK){
+        final Optional<Professeur> maybeProfesseur = professeurService.findByPk(pK);
+
+         if(maybeProfesseur.isEmpty())
+            return ResponseEntity.ok(false);
+
+         return ResponseEntity.ok(true);
+
     }
 }

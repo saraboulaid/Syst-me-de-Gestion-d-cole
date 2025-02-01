@@ -1,5 +1,6 @@
 package com.example.modulemicroservice;
 
+import com.example.modulemicroservice.DTO.AssignProfDTO;
 import com.example.modulemicroservice.controllers.ModuleController;
 import com.example.modulemicroservice.models.Module;
 import com.example.modulemicroservice.services.ModuleService;
@@ -129,4 +130,39 @@ class ModuleControllerTest {
         mockMvc.perform(delete("/api/modules/cl"))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void testAssignProfesseur_Success() throws Exception {
+        String moduleId = "MATH";
+        String professeurId = "Prof1";
+
+        AssignProfDTO assignProfDTO = new AssignProfDTO();
+        assignProfDTO.setIdProf(professeurId);
+
+        when(moduleService.findByPk(moduleId)).thenReturn(Optional.of(mockModule));
+        when(moduleService.checkProfesseurExistence(professeurId)).thenReturn(true);
+        when(moduleService.save(any(Module.class))).thenReturn(mockModule);
+
+        mockMvc.perform(put("/api/modules/{pK}/assign/", moduleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idProf\": \"" + professeurId + "\"}"))
+                .andExpect(status().isAccepted())
+                .andExpect(jsonPath("$.idProf").value(professeurId));
+    }
+
+    @Test
+    void testAssignProfesseur_ProfNotFound() throws Exception {
+        String moduleId = "MATH";
+        String professeurId = "UNKNOWN_PROF";
+
+        when(moduleService.findByPk(moduleId)).thenReturn(Optional.of(mockModule));
+        when(moduleService.checkProfesseurExistence(professeurId)).thenReturn(false);
+
+        mockMvc.perform(put("/api/modules/{pK}/assign/", moduleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idProf\": \"" + professeurId + "\"}"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Professeur introuvable"));
+    }
+
 }
