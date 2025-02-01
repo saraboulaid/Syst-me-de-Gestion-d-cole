@@ -2,18 +2,20 @@ package com.example.etudiant.Controllers;
 
 import com.example.etudiant.Entities.Etudiant;
 import com.example.etudiant.Entities.Inscription;
+import com.example.etudiant.Reposetories.InscriptionRepository;
 import com.example.etudiant.Services.EtudiantService;
 import com.example.etudiant.Services.InscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@CrossOrigin(origins = "http://localhost:8084")
 @RestController
 @RequestMapping(value = "/api/etudiants")
 public class EtudiantController {
@@ -21,6 +23,8 @@ public class EtudiantController {
     EtudiantService etudiantService;
     @Autowired
     InscriptionService inscriptionService;
+    @Autowired
+    InscriptionRepository inscriptionRepository;
 
     @GetMapping(value = "/")
     public ResponseEntity<List<Etudiant>> list(){
@@ -64,11 +68,22 @@ public class EtudiantController {
         return ResponseEntity.accepted().build();
     }
 
+    @GetMapping(value = "/count")
+    public ResponseEntity<Long> count(){
+        return ResponseEntity.ok(etudiantService.count());
+    }
+
+    // Gestion des inscriptions
+
     @PostMapping("/{pk}/assign")
     public ResponseEntity<Inscription> assignModule(@PathVariable String pk, @RequestParam String moduleId){
         Optional<Etudiant> maybeEtudiant = etudiantService.findByPk(pk);
         if (maybeEtudiant.isEmpty())
             return ResponseEntity.notFound().build();
+
+        if (!etudiantService.checkModuleExistence(moduleId)){
+            return ResponseEntity.notFound().build();
+        }
 
         Etudiant etudiant = maybeEtudiant.get();
 
@@ -107,5 +122,43 @@ public class EtudiantController {
 
         List<Inscription> inscriptions = inscriptionService.findByEtudiant(pk);
         return ResponseEntity.ok(inscriptions);
+    }
+
+    @GetMapping(value = "/countInscriptions")
+    public ResponseEntity<Long> countInscriptions(){
+        return ResponseEntity.ok(inscriptionService.count());
+    }
+
+    // Statistiques
+
+    @GetMapping("/inscriptions-top-modules")
+    public ResponseEntity<List<Map<String, Object>>> getTopModules() {
+        List<Object[]> results = inscriptionRepository.findTopModules();
+        List<Map<String, Object>> topModules = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> moduleData = new HashMap<>();
+            moduleData.put("moduleId", result[0]);
+            moduleData.put("totalInscriptions", result[1]);
+            topModules.add(moduleData);
+        }
+
+        return ResponseEntity.ok(topModules);
+    }
+
+    @GetMapping("/inscriptions-top-etudiants")
+    public ResponseEntity<List<Map<String, Object>>> getTopEtudiants() {
+        List<Object[]> results = inscriptionRepository.findTopEtudiants();
+        List<Map<String, Object>> topEtudiants = new ArrayList<>();
+
+        for (Object[] result : results) {
+            Map<String, Object> etudiantData = new HashMap<>();
+            etudiantData.put("matricule", result[0]);
+            etudiantData.put("totalInscriptions", result[1]);
+
+            topEtudiants.add(etudiantData);
+        }
+
+        return ResponseEntity.ok(topEtudiants);
     }
 }

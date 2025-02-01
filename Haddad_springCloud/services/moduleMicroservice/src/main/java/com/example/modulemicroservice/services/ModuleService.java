@@ -10,6 +10,6 @@ public interface ModuleService {
     Optional<Module> findByPk(String pk);
     List<Module> list();
     void delete(Module module);
-
+    long count();
     boolean checkProfesseurExistence(String IdProf);
 }

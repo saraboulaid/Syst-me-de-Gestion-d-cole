@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:8083")
 @RestController
 @RequestMapping(value = "api/modules")
 public class ModuleController {
@@ -89,6 +90,22 @@ public class ModuleController {
 
         updatedModule = moduleService.save(updatedModule);
         return ResponseEntity.accepted().body(updatedModule);
+    }
+
+    @GetMapping(value = "/count")
+    public ResponseEntity<Long> count(){
+        return ResponseEntity.ok(moduleService.count());
+    }
+
+    @GetMapping(value = "/{pK}/exist")
+    public ResponseEntity<Boolean> exist( @PathVariable final String pK){
+        final Optional<Module> maybeModule = moduleService.findByPk(pK);
+
+        if(maybeModule.isEmpty())
+            return ResponseEntity.ok(false);
+
+        return ResponseEntity.ok(true);
+
     }
 }
 

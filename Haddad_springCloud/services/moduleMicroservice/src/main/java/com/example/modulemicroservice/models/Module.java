@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Module {
     @Id
-    private String IdModule;
+    private String idModule;
     private String nom;
     private int nbrHeures;
     private String description;
@@ -23,7 +23,7 @@ public class Module {
     private String IdProf;
 
     public Module(String id, String nom, int nbrHeures, String description){
-        this.IdModule = id;
+        this.idModule = id;
         this.nom = nom;
         this.description = description;
         this.nbrHeures = nbrHeures;

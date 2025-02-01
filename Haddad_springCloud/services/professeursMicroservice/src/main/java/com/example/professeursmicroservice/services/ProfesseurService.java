@@ -10,4 +10,5 @@ public interface ProfesseurService {
     Optional<Professeur> findByPk(String pk);
     List<Professeur> list();
     void delete(Professeur professeur);
+    long count();
 }
